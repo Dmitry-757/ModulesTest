@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/ByTechTask/ByTechTask.iml" filepath="$PROJECT_DIR$/ByTechTask/ByTechTask.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Module_1_3_Dmitriy_Elkin_Practice_CRUD.iml" filepath="$PROJECT_DIR$/Module_1_3_Dmitriy_Elkin_Practice_CRUD.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NonTechTask/NonTechTask.iml" filepath="$PROJECT_DIR$/NonTechTask/NonTechTask.iml" />
+    </modules>
+  </component>
+</project>
