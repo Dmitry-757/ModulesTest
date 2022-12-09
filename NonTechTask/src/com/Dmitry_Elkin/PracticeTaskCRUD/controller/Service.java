@@ -13,7 +13,7 @@ import static com.Dmitry_Elkin.PracticeTaskCRUD.controller.MainController.sc;
 public class Service {
 
     //получение строкового параметра из консоли
-    public static String getStringParamFromConsole(String parameterName) {
+    static String getStringParamFromConsole(String parameterName) {
         Pattern pattern = Pattern.compile("^[a-zA-Zа-яА-Я\s-_#]*");
         System.out.println("Input " + parameterName);
         String strParam;
@@ -105,7 +105,7 @@ public class Service {
 
 
     //вывод в консоль списка экземпляров модели из указанного репозитория
-    public static <T> void printItems(Status status, GenericRepository<T, Long> repository) {
+    static <T> void printItems(Status status, GenericRepository<T, Long> repository) {
         System.out.println("current items : ");
         for (T item : repository.getAll(status)) {
             System.out.println(item.toString());

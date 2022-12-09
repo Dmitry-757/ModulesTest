@@ -8,7 +8,7 @@ import com.Dmitry_Elkin.PracticeTaskCRUD.model.Status;
 import com.Dmitry_Elkin.PracticeTaskCRUD.repository.DeveloperRepository;
 import com.Dmitry_Elkin.PracticeTaskCRUD.repository.RepositoryFactory;
 
-import java.util.List;
+import java.util.HashSet;
 
 import static com.Dmitry_Elkin.PracticeTaskCRUD.controller.MainController.sc;
 import static com.Dmitry_Elkin.PracticeTaskCRUD.controller.Service.*;
@@ -46,11 +46,9 @@ public class DeveloperController {
 
     private static void createNewItem() {
 
-        System.out.println("Input name of item");
-
         String firstName = getStringParamFromConsole("first name");
         String lastName = getStringParamFromConsole("second name");
-        List<Skill> skills = getGenericListFromConsole("Skill", RepositoryFactory.getSkillRepository());
+        HashSet<Skill> skills = new HashSet<>(getGenericListFromConsole("Skill", RepositoryFactory.getSkillRepository()));
         Specialty specialty = getGenericParamFromConsole("Specialty", RepositoryFactory.getSpecialtyRepository());
         repository.addOrUpdate(new Developer(firstName, lastName, skills, specialty));
     }
@@ -58,37 +56,56 @@ public class DeveloperController {
 
 
     private static void changeItem() {
-        printItems(Status.ACTIVE);// do not to disturb the dead
-        System.out.println("Input id of changing item");
-        if (sc.hasNextLong()) {
-            long id = sc.nextLong();
-            sc.nextLine();
-            System.out.println("your choice = " + id);
-            Developer item = repository.getById(id);
-            if (item != null) {
-//                System.out.println("editing item = " + item.toString());
-                System.out.println("editing item = " + item);
+//        printItems(Status.ACTIVE);// do not to disturb the dead
+//        System.out.println("Input id of changing item");
+//        if (sc.hasNextLong()) {
+//            long id = sc.nextLong();
+//            sc.nextLine();
+//            System.out.println("your choice = " + id);
+//            Developer item = repository.getById(id);
+//            if (item != null) {
+////                System.out.println("editing item = " + item.toString());
+//                System.out.println("editing item = " + item);
+//
+//                String firstName = getStringParamFromConsole("first name");
+//                String lastName = getStringParamFromConsole("second name");
+//                List<Skill> skills = getGenericListFromConsole("Skills", RepositoryFactory.getSkillRepository());
+//                Specialty specialty = getGenericParamFromConsole("Specialty", RepositoryFactory.getSpecialtyRepository());
+//                item.setFirstName(firstName);
+//                item.setLastName(lastName);
+//                if (skills.size() != 0) {
+//                    item.setSkills(skills);
+//                }
+//                if (specialty != null) {
+//                    item.setSpecialty(specialty);
+//                }
+//
+//                repository.addOrUpdate(item);
+//                System.out.println("After edit item is : "+item);
+//            } else
+//                System.out.println("item by id `" + id + "` is not found");
+//        } else {
+//            System.out.println("wrong input...");
+//        }
 
-                String firstName = getStringParamFromConsole("first name");
-                String lastName = getStringParamFromConsole("second name");
-                List<Skill> skills = getGenericListFromConsole("Skills", RepositoryFactory.getSkillRepository());
-                Specialty specialty = getGenericParamFromConsole("Specialty", RepositoryFactory.getSpecialtyRepository());
-                item.setFirstName(firstName);
-                item.setLastName(lastName);
-                if (skills.size() != 0) {
-                    item.setSkills(skills);
-                }
-                if (specialty != null) {
-                    item.setSpecialty(specialty);
-                }
-
-                repository.addOrUpdate(item);
-                System.out.println("After edit item is : "+item);
-            } else
-                System.out.println("item by id `" + id + "` is not found");
-        } else {
-            System.out.println("wrong input...");
+        Developer item = getGenericParamFromConsole("Developer", repository);
+        if (item != null) {
+            System.out.println("editing item = " + item);
+            String firstName = getStringParamFromConsole("first name");
+            String lastName = getStringParamFromConsole("second name");
+            HashSet<Skill> skills = new HashSet<>(getGenericListFromConsole("Skills", RepositoryFactory.getSkillRepository()));
+            Specialty specialty = getGenericParamFromConsole("Specialty", RepositoryFactory.getSpecialtyRepository());
+            item.setFirstName(firstName);
+            item.setLastName(lastName);
+            if (skills.size() != 0) {
+                item.setSkills(skills);
+            }
+            if (specialty != null) {
+                item.setSpecialty(specialty);
+            }
+            repository.addOrUpdate(item);
         }
+
     }
 
     public static void printItems(Status status) {

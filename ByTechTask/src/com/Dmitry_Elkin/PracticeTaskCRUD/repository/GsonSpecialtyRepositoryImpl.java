@@ -19,7 +19,6 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class GsonSpecialtyRepositoryImpl implements SpecialtyRepository {
     final Class<Specialty> typeParameterClass = Specialty.class;
-//    private static final String fileName = "specialty.json";
     private final String fileName;
     private final String tmpFileName;
     private final Path file;
@@ -57,7 +56,6 @@ public class GsonSpecialtyRepositoryImpl implements SpecialtyRepository {
                 }
             }
         } catch (IOException e) {
-//            throw new RuntimeException(e);
             System.out.println("some io exception in module GsonSpecialtyRepositoryImpl in meth getAll: "+e.getMessage());
         }
         return itemList;
@@ -123,7 +121,7 @@ public class GsonSpecialtyRepositoryImpl implements SpecialtyRepository {
     public void update(Specialty item){
         try(
                 BufferedReader in = new BufferedReader(new FileReader(fileName));
-                BufferedWriter out = new BufferedWriter(new FileWriter(tmpFileName));
+                BufferedWriter out = new BufferedWriter(new FileWriter(tmpFileName))
                 )
         {
             String jsonStr;
@@ -139,8 +137,6 @@ public class GsonSpecialtyRepositoryImpl implements SpecialtyRepository {
                 out.newLine();
             }
         } catch (FileNotFoundException e) {
-//            throw new RuntimeException(e);
-//            System.out.println("oops! File not found! "+e.getMessage());
             System.out.println("file "+file.getFileName()+" not exist!");
         } catch (IOException e) {
             System.out.println("oops! some IO exception : "+e.getMessage());
@@ -148,7 +144,6 @@ public class GsonSpecialtyRepositoryImpl implements SpecialtyRepository {
         try {
             Files.move(tmpFile, file, REPLACE_EXISTING);
         } catch (IOException e) {
-//            System.out.println("oops! some IO exception : "+e.getMessage());
             System.out.println("some io exception in module GsonSpecialtyRepositoryImpl in meth update: "+e.getMessage());
         }
 

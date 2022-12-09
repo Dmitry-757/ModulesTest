@@ -1,14 +1,11 @@
 package com.Dmitry_Elkin.PracticeTaskCRUD.controller;
 
-import com.Dmitry_Elkin.PracticeTaskCRUD.model.BaseModelsMethsI;
-import com.Dmitry_Elkin.PracticeTaskCRUD.model.Status;
+import com.Dmitry_Elkin.PracticeTaskCRUD.model.*;
 import com.Dmitry_Elkin.PracticeTaskCRUD.repository.GenericRepository;
-
 import java.lang.reflect.InvocationTargetException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.Dmitry_Elkin.PracticeTaskCRUD.controller.MainController.sc;
+import static com.Dmitry_Elkin.PracticeTaskCRUD.controller.Service.*;
 
 public class MyGenericController<T extends BaseModelsMethsI> {
 
@@ -49,61 +46,37 @@ public class MyGenericController<T extends BaseModelsMethsI> {
     }
 
     protected void createNewItem() {
-        Pattern pattern = Pattern.compile("^[a-zA-Zа-яА-Я\s]*");
-        System.out.println("Input name of item");
-        String name;
-        String line = sc.nextLine();
-        Matcher matcher = pattern.matcher(line);
-        if (matcher.find()) {
-            name = matcher.group();
-            System.out.println("name of item = " + name);
 
-            T item = null;
-            try {
-                Class clazz = Class.forName(typeParameterClass.getName());
-                Class[] myClassParams = {String.class};//not for Developer!!!!
+        String name = getStringParamFromConsole("name");
 
-                item = (T) clazz.getConstructor(myClassParams).newInstance(name);
-            } catch (ClassNotFoundException | IllegalAccessException | InstantiationException |
-                     InvocationTargetException | NoSuchMethodException e) {
-//                throw new RuntimeException(e);
-                System.out.println("error during creating new instance of class : " + e.getMessage());
-                return;
-            }
+        T item = null;
+        //*** ONLY FOR MODELS WITH CONSTRUCTOR WITH ONE STRING PARAMETER!!! ***
+        try {
+            Class clazz = Class.forName(typeParameterClass.getName());
+            Class[] myClassParams = {String.class};//ONLY FOR MODELS WITH CONSTRUCTOR WITH ONE STRING PARAMETER!!!
 
-            repository.addOrUpdate(item);
-        } else {
-            System.out.println("wrong input... Please, use only letters!");
+            item = (T) clazz.getConstructor(myClassParams).newInstance(name);
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException |
+                 InvocationTargetException | NoSuchMethodException e) {
+            System.out.println("error during creating new instance of class : " + e.getMessage());
+            return;
         }
+
+        repository.addOrUpdate(item);
     }
 
     protected void changeItem() {
-        Pattern pattern = Pattern.compile("^[a-zA-Zа-яА-Я\s]*");
-        printItems(Status.ACTIVE);// do not to disturb the dead
-        System.out.println("Input id of changing item");
-        if (sc.hasNextLong()) {
-            long id = sc.nextLong();
-            sc.nextLine();
-            System.out.println("your choice = " + id);
-            T item = repository.getById(id);
-            if (item != null) {
-                System.out.println("editing item = " + item.toString());
+        T item = getGenericParamFromConsole("Item", repository);
+        if (item != null) {
+            System.out.println("editing item = " + item);
 
-                System.out.println("Input new name of item");
-                //sc.nextLine();
-                String line = sc.nextLine();
-                Matcher matcher = pattern.matcher(line);
-                if (matcher.find()) {
-                    String newName = matcher.group();
-                    item.setName(newName);
-                    repository.addOrUpdate(item);
-                    System.out.println("new name of item = " + newName);
-                }
-            } else
-                System.out.println("item by id `" + id + "` is not found");
-        } else {
-            System.out.println("wrong input...");
+            String newName = getStringParamFromConsole("first name");
+            item.setName(newName);
+
+            repository.addOrUpdate(item);
+            System.out.println("After edit item is : "+item);
         }
+
     }
 
     protected void printItems(Status status) {
@@ -115,48 +88,20 @@ public class MyGenericController<T extends BaseModelsMethsI> {
 
 
     protected void deleteItem() {
-        System.out.println("Choose item from:");
-        printItems(Status.ACTIVE);
-        if (repository.getAll(Status.ACTIVE).size() == 0) {
-            System.out.println("There is no Non-deleted items");
-            return;
-        }
 
-        System.out.println("Input id of deleting item");
-        if (sc.hasNextLong()) {
-            long id = sc.nextLong();
-            sc.nextLine();
-            T item = repository.getById(id);
-            if (item != null) {
-                System.out.println("deleting item is : " + item.toString());
-                repository.delete(item);
-            } else
-                System.out.println("item by id `" + id + "` was not found...");
-        } else {
-            System.out.println("wrong input...");
+        T item = getGenericParamFromConsole("Item", repository, Status.ACTIVE);
+        if (item != null) {
+            System.out.println("deleting item is : " + item);
+            repository.delete(item);
         }
     }
 
     protected void unDeleteItem() {
-        System.out.println("Choose item from:");
-        printItems(Status.DELETED);
-        if (repository.getAll(Status.DELETED).size() == 0) {
-            System.out.println("There is no deleted items");
-            return;
-        }
 
-        System.out.println("Input id of UnDeleting item");
-        if (sc.hasNextLong()) {
-            long id = sc.nextLong();
-            sc.nextLine();
-            T item = repository.getById(id);
-            if (item != null) {
-                System.out.println("UnDeleting item is : " + item.toString());
-                repository.unDelete(item);
-            } else
-                System.out.println("item by id `" + id + "` was not found...");
-        } else {
-            System.out.println("wrong input...");
+        T item = getGenericParamFromConsole("Item", repository, Status.DELETED);
+        if (item != null) {
+            System.out.println("UnDeleting item is : " + item);
+            repository.unDelete(item);
         }
     }
 

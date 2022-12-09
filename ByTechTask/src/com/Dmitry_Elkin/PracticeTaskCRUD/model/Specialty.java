@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 //implements BaseModelsMethsI - for my experiment by creating common repository
 //meth getStaticLastId() is needed  for possibility to get lastId from instance of model-class
-public class Specialty implements BaseModelsMethsI {
+public class Specialty{
 
     private static volatile long lastId;
     static{
@@ -27,11 +27,6 @@ public class Specialty implements BaseModelsMethsI {
     private String Name;
     private Status status;
 
-    public Specialty(long id2, String name) {
-        id = id2;
-        Name = name;
-        status = Status.ACTIVE;
-    }
 
     public Specialty(String name) {
         Name = name;
@@ -42,7 +37,7 @@ public class Specialty implements BaseModelsMethsI {
         return lastId;
     }
 
-    @Override
+
     public long getStaticLastId() {//for using in MyGenericRepositoryImpl
         return Specialty.lastId;
     }

@@ -94,7 +94,6 @@ public class SkillController {
             repository.addOrUpdate(item);
         }
 
-
     }
 
     private static void printItems(Status status) {
