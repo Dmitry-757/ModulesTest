@@ -1,16 +1,19 @@
-package com.Dmitry_Elkin.PracticeTaskCRUD.controller;
+package com.Dmitry_Elkin.PracticeTaskCRUD.view;
 
+import com.Dmitry_Elkin.PracticeTaskCRUD.AppStarter;
 import com.Dmitry_Elkin.PracticeTaskCRUD.model.Status;
 import com.Dmitry_Elkin.PracticeTaskCRUD.repository.GenericRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.Dmitry_Elkin.PracticeTaskCRUD.controller.MainController.sc;
 
 public class Service {
+
+    private static final Scanner sc = AppStarter.getScanner();
 
     //получение строкового параметра из консоли
     public static String getStringParamFromConsole(String parameterName) {

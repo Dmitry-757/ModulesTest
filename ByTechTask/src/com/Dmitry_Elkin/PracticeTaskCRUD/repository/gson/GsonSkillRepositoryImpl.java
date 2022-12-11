@@ -1,7 +1,8 @@
-package com.Dmitry_Elkin.PracticeTaskCRUD.repository;
+package com.Dmitry_Elkin.PracticeTaskCRUD.repository.gson;
 
 import com.Dmitry_Elkin.PracticeTaskCRUD.model.Skill;
 import com.Dmitry_Elkin.PracticeTaskCRUD.model.Status;
+import com.Dmitry_Elkin.PracticeTaskCRUD.repository.SkillRepository;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -99,11 +100,26 @@ public class GsonSkillRepositoryImpl implements SkillRepository {
         return null;
     }
 
+
+//    private long generateNewId(Path lIdfile){
+//        long lastId = 0;
+//        if (Files.exists(lIdfile)) {
+//            try {
+//                lastId = Long.parseLong(Files.readString(Path.of("skill.lastId")));
+//                return lastId;
+//            } catch (IOException e) {
+//                System.out.println("oops! there is some io exception in GsonSkillRepositoryImpl in meth generateNewId "+e.getMessage());
+//            }
+//        } else {
+//            System.out.println("file "+lIdfile.getFileName()+" was not found!");
+//        }
+//        return lastId;
+//    }
+
     @Override
     public void addOrUpdate(Skill item) {
         //*** add ***
         if (item.getId() <= 0) {
-            item.setNewId();
             add(item);
         } else {
             //*** update ***
@@ -111,8 +127,9 @@ public class GsonSkillRepositoryImpl implements SkillRepository {
         }
     }
 
-
     public void add(Skill item) {
+        long lastId = RepositoryService.generateNewId(lastIdfile);
+        item.setId(++lastId);
         try {
             if (Files.exists(file)) {
                 Files.write(file, List.of(gson.toJson(item)), StandardOpenOption.APPEND);
@@ -120,12 +137,11 @@ public class GsonSkillRepositoryImpl implements SkillRepository {
                 Files.write(file, List.of(gson.toJson(item)), StandardOpenOption.CREATE);
             }
             //записываем lastId
-            long lastId = Skill.getLastId();
             Files.writeString(lastIdfile, "" + lastId, Charset.defaultCharset(), StandardOpenOption.CREATE);
-
         } catch (IOException e) {
             System.out.println("some io exception in module GsonSkillRepositoryImpl in meth add: "+e.getMessage());
         }
+
     }
 
     public void update(Skill item) {

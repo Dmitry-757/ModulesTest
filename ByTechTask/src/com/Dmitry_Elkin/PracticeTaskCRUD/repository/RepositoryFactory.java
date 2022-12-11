@@ -1,6 +1,10 @@
 package com.Dmitry_Elkin.PracticeTaskCRUD.repository;
 
 
+import com.Dmitry_Elkin.PracticeTaskCRUD.repository.gson.GsonDeveloperRepositoryImpl;
+import com.Dmitry_Elkin.PracticeTaskCRUD.repository.gson.GsonSkillRepositoryImpl;
+import com.Dmitry_Elkin.PracticeTaskCRUD.repository.gson.GsonSpecialtyRepositoryImpl;
+
 public class RepositoryFactory {
     private static final GsonSkillRepositoryImpl skillRepository;
     private static final GsonSpecialtyRepositoryImpl specialtyRepository;

@@ -1,34 +1,16 @@
 package com.Dmitry_Elkin.PracticeTaskCRUD.model;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-//implements BaseModelsMethsI - for my experiment by creating common repository
-//meth getStaticLastId() is needed  for possibility to get lastId from instance of model-class
 public class Developer {
-    private static volatile long lastId;
-    static{
-        if (lastId == 0){
-            try {
-                if (Files.exists(Path.of("developer.lastId"))) {
-                    lastId = Long.parseLong(Files.readString(Path.of("developer.lastId")));
-                }
-            } catch (IOException e) {
-                System.out.println("oops! there is some io exception "+e.getMessage());
-            }
-        }
-    }
 
     private long id;
     private String firstName;
     private String lastName;
-//    private List<Skill> skills;
-    private HashSet<Skill> skills;
+    private Set<Skill> skills;
 
     private Specialty specialty;
     private Status status;
@@ -41,26 +23,12 @@ public class Developer {
         this.status = Status.ACTIVE;
     }
 
-    public static long getLastId() {
-        return lastId;
-    }
-
-    public long getStaticLastId() {//for using in MyGenericRepositoryImpl
-        return Developer.lastId;
-    }
-
     public long getId() {
         return id;
     }
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public void setNewId() {
-        AtomicLong l = new AtomicLong(lastId);
-        Developer.lastId = l.incrementAndGet();
-        this.id = lastId;
     }
 
     public String getFirstName() {
@@ -79,11 +47,11 @@ public class Developer {
         this.lastName = lastName;
     }
 
-    public HashSet<Skill> getSkills() {
+    public Set<Skill> getSkills() {
         return skills;
     }
 
-    public void setSkills(HashSet<Skill> skills) {
+    public void setSkills(Set<Skill> skills) {
         this.skills = skills;
     }
 

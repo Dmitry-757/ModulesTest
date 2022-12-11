@@ -5,27 +5,35 @@ import com.Dmitry_Elkin.PracticeTaskCRUD.model.Developer;
 import com.Dmitry_Elkin.PracticeTaskCRUD.model.Skill;
 import com.Dmitry_Elkin.PracticeTaskCRUD.model.Specialty;
 import com.Dmitry_Elkin.PracticeTaskCRUD.model.Status;
-import com.Dmitry_Elkin.PracticeTaskCRUD.repository.DeveloperRepository;
+import com.Dmitry_Elkin.PracticeTaskCRUD.repository.GenericRepository;
 import com.Dmitry_Elkin.PracticeTaskCRUD.repository.RepositoryFactory;
+import com.Dmitry_Elkin.PracticeTaskCRUD.view.DeveloperView;
+import com.Dmitry_Elkin.PracticeTaskCRUD.view.Service;
 
 import java.util.HashSet;
+import java.util.Scanner;
+import java.util.Set;
 
-import static com.Dmitry_Elkin.PracticeTaskCRUD.controller.MainController.sc;
-import static com.Dmitry_Elkin.PracticeTaskCRUD.controller.Service.*;
+
+import static com.Dmitry_Elkin.PracticeTaskCRUD.view.Service.*;
 
 public class DeveloperController {
 
-    private static final DeveloperRepository repository = RepositoryFactory.getDeveloperRepository();
+
+    //* Singleton realisation *
+    private DeveloperController() {}
+    private static class SingletonHolder {
+        private static final DeveloperController INSTANCE = new DeveloperController();
+    }
+    public static DeveloperController getInstance(){return DeveloperController.SingletonHolder.INSTANCE;}
+
+    private final GenericRepository<Developer, Long> repository = RepositoryFactory.getDeveloperRepository();
 
     //************* menu ********************
-    public static void menu() {
+    public void menu(Scanner sc) {
         boolean goBack = false;
         while (!goBack) {
-            System.out.println("1 - New item, 2 - change item, 3 - Delete item, 4 - UnDelete item, " +
-                    "5 - print all items, 6 - print Active items, 7 - print Deleted items, 0 - go back");
-            if (sc.hasNextInt()) {
-                int choice = sc.nextInt();
-                sc.nextLine();
+                int choice = DeveloperView.getActionChoice(sc);
                 switch (choice) {
                     case 1 -> createNewItem();
                     case 2 -> changeItem();
@@ -37,14 +45,10 @@ public class DeveloperController {
                     case 0 -> goBack = true;
                     default -> System.out.println("Wrong input!");
                 }
-            } else {
-                System.out.println("wrong input... Please, use only digits!");
-                sc.nextLine();
-            }
         }
     }
 
-    private static void createNewItem() {
+    private void createNewItem() {
 
         String firstName = getStringParamFromConsole("first name");
         String lastName = getStringParamFromConsole("second name");
@@ -55,45 +59,13 @@ public class DeveloperController {
 
 
 
-    private static void changeItem() {
-//        printItems(Status.ACTIVE);// do not to disturb the dead
-//        System.out.println("Input id of changing item");
-//        if (sc.hasNextLong()) {
-//            long id = sc.nextLong();
-//            sc.nextLine();
-//            System.out.println("your choice = " + id);
-//            Developer item = repository.getById(id);
-//            if (item != null) {
-////                System.out.println("editing item = " + item.toString());
-//                System.out.println("editing item = " + item);
-//
-//                String firstName = getStringParamFromConsole("first name");
-//                String lastName = getStringParamFromConsole("second name");
-//                List<Skill> skills = getGenericListFromConsole("Skills", RepositoryFactory.getSkillRepository());
-//                Specialty specialty = getGenericParamFromConsole("Specialty", RepositoryFactory.getSpecialtyRepository());
-//                item.setFirstName(firstName);
-//                item.setLastName(lastName);
-//                if (skills.size() != 0) {
-//                    item.setSkills(skills);
-//                }
-//                if (specialty != null) {
-//                    item.setSpecialty(specialty);
-//                }
-//
-//                repository.addOrUpdate(item);
-//                System.out.println("After edit item is : "+item);
-//            } else
-//                System.out.println("item by id `" + id + "` is not found");
-//        } else {
-//            System.out.println("wrong input...");
-//        }
-
+    private void changeItem() {
         Developer item = getGenericParamFromConsole("Developer", repository);
         if (item != null) {
             System.out.println("editing item = " + item);
             String firstName = getStringParamFromConsole("first name");
             String lastName = getStringParamFromConsole("second name");
-            HashSet<Skill> skills = new HashSet<>(getGenericListFromConsole("Skills", RepositoryFactory.getSkillRepository()));
+            Set<Skill> skills = new HashSet<>(getGenericListFromConsole("Skills", RepositoryFactory.getSkillRepository()));
             Specialty specialty = getGenericParamFromConsole("Specialty", RepositoryFactory.getSpecialtyRepository());
             item.setFirstName(firstName);
             item.setLastName(lastName);
@@ -108,12 +80,12 @@ public class DeveloperController {
 
     }
 
-    public static void printItems(Status status) {
+    public void printItems(Status status) {
         Service.printItems(status, repository);
     }
 
 
-    private static void deleteItem() {
+    private void deleteItem() {
         Developer item = getGenericParamFromConsole("Developer", repository, Status.ACTIVE);
         if (item != null) {
             System.out.println("deleting item is : " + item);
@@ -122,7 +94,7 @@ public class DeveloperController {
 
     }
 
-    private static void unDeleteItem() {
+    private void unDeleteItem() {
         Developer item = getGenericParamFromConsole("Developer", repository, Status.DELETED);
         if (item != null) {
             System.out.println("UnDeleting item is : " + item);

@@ -1,34 +1,34 @@
 package com.Dmitry_Elkin.PracticeTaskCRUD.controller;
 
-import com.Dmitry_Elkin.PracticeTaskCRUD.AppMain;
+import com.Dmitry_Elkin.PracticeTaskCRUD.AppStarter;
+import com.Dmitry_Elkin.PracticeTaskCRUD.view.MainMenuView;
 
 import java.util.Scanner;
 
 public class MainController {
-    public static Scanner sc = new Scanner(System.in);
+
+    private final SkillController skillController = SkillController.getInstance();
+    private final SpecialtyController specialtyController =  SpecialtyController.getInstance();
+    private final DeveloperController developerController = DeveloperController.getInstance();
 
     public void upLevelMenu() {
-        System.out.println("1 - work with Skills, " +
-                " 2 - work with Specialties, " +
-                " 3 - work with Developers," +
-                " 0 - exit");
-        if (sc.hasNextInt()) {
-            int choice = sc.nextInt();
-            sc.nextLine();
+        Scanner sc = AppStarter.getScanner();
+        int choice = -1;
+        while (choice != 0) {
+            choice = MainMenuView.getChoice(sc);
             switch (choice) {
-                case 1 -> SkillController.menu();
+                case 1 -> skillController.menu(sc);
 
-                case 2 -> SpecialtyController.menu();
+                case 2 -> specialtyController.menu(sc);
 
-                case 3 -> DeveloperController.menu();
+                case 3 -> developerController.menu(sc);
 
-                case 0 -> AppMain.terminate = true;
+                case 0 -> System.out.println("bye!");
+//                case 0 -> System.exit(0);
                 default -> System.out.println("Wrong input!");
             }
-        } else {
-            System.out.println("wrong input... Please, use only digits!");
-            sc.nextLine();
         }
+
     }
 
 }

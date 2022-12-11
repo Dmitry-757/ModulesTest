@@ -1,27 +1,8 @@
 package com.Dmitry_Elkin.PracticeTaskCRUD.model;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicLong;
 
-//implements BaseModelsMethsI - for my experiment by creating common repository
-//meth getStaticLastId() is needed  for possibility to get lastId from instance of model-class
 public class Skill{
-    private static volatile long lastId;
-
-    static{
-        if (lastId == 0){
-            try {
-                if (Files.exists(Path.of("skill.lastId"))) {
-                    lastId = Long.parseLong(Files.readString(Path.of("skill.lastId")));
-                }
-            } catch (IOException e) {
-                System.out.println("oops! there is some io exception "+e.getMessage());
-            }
-        }
-    }
     private long id;
     private String Name;
     private Status status;
@@ -33,26 +14,12 @@ public class Skill{
 
     }
 
-    public static long getLastId() {
-        return Skill.lastId;
-    }
-
-    public long getStaticLastId() {//for using in MyGenericRepositoryImpl
-        return Skill.lastId;
-    }
-
-
     public long getId() {
         return id;
     }
 
     public void setId(long id) {
         this.id = id;
-    }
-    public void setNewId() {
-        AtomicLong l = new AtomicLong(lastId);
-        Skill.lastId = l.incrementAndGet();
-        this.id = lastId;
     }
 
     public void setDeleted() {

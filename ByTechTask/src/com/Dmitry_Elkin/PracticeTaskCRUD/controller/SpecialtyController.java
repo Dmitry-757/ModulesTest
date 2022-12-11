@@ -2,26 +2,33 @@ package com.Dmitry_Elkin.PracticeTaskCRUD.controller;
 
 import com.Dmitry_Elkin.PracticeTaskCRUD.model.Specialty;
 import com.Dmitry_Elkin.PracticeTaskCRUD.model.Status;
+import com.Dmitry_Elkin.PracticeTaskCRUD.repository.GenericRepository;
 import com.Dmitry_Elkin.PracticeTaskCRUD.repository.RepositoryFactory;
-import com.Dmitry_Elkin.PracticeTaskCRUD.repository.SpecialtyRepository;
+import com.Dmitry_Elkin.PracticeTaskCRUD.view.Service;
+import com.Dmitry_Elkin.PracticeTaskCRUD.view.SpecialtyView;
 
-import static com.Dmitry_Elkin.PracticeTaskCRUD.controller.MainController.sc;
-import static com.Dmitry_Elkin.PracticeTaskCRUD.controller.Service.getGenericParamFromConsole;
-import static com.Dmitry_Elkin.PracticeTaskCRUD.controller.Service.getStringParamFromConsole;
+import java.util.Scanner;
+
+import static com.Dmitry_Elkin.PracticeTaskCRUD.view.Service.getGenericParamFromConsole;
+import static com.Dmitry_Elkin.PracticeTaskCRUD.view.Service.getStringParamFromConsole;
 
 public class SpecialtyController {
 
-    private static final SpecialtyRepository repository = RepositoryFactory.getSpecialtyRepository();
+    //* Singleton realisation *
+    private SpecialtyController() {}
+    private static class SingletonHolder {
+        private static final SpecialtyController INSTANCE = new SpecialtyController();
+    }
+    public static SpecialtyController getInstance(){return SpecialtyController.SingletonHolder.INSTANCE;}
+    //********
+
+    private final GenericRepository<Specialty, Long> repository = RepositoryFactory.getSpecialtyRepository();
 
     //************* menu ********************
-    public static void menu() {
+    public void menu(Scanner sc) {
         boolean goBack = false;
         while (!goBack) {
-            System.out.println("1 - New item, 2 - change item, 3 - Delete item, 4 - UnDelete item, " +
-                    "5 - print all items, 6 - print Active items, 7 - print Deleted items, 0 - go back");
-            if (sc.hasNextInt()) {
-                int choice = sc.nextInt();
-                sc.nextLine();
+                int choice = SpecialtyView.getActionChoice(sc);
                 switch (choice) {
                     case 1 -> createNewItem();
                     case 2 -> changeItem();
@@ -33,19 +40,15 @@ public class SpecialtyController {
                     case 0 -> goBack = true;
                     default -> System.out.println("Wrong input!");
                 }
-            } else {
-                System.out.println("wrong input... Please, use only digits!");
-                sc.nextLine();
-            }
         }
     }
 
-    private static void createNewItem() {
+    private void createNewItem() {
         String name = getStringParamFromConsole("first name");
         repository.addOrUpdate(new Specialty(name));
     }
 
-    private static void changeItem() {
+    private void changeItem() {
 
         Specialty item = getGenericParamFromConsole("Specialty", repository);
         if (item != null) {
@@ -58,12 +61,12 @@ public class SpecialtyController {
 
     }
 
-    private static void printItems(Status status) {
+    private void printItems(Status status) {
         Service.printItems(status, repository);
     }
 
 
-    private static void deleteItem() {
+    private void deleteItem() {
         Specialty item = getGenericParamFromConsole("Specialty", repository, Status.ACTIVE);
         if (item != null) {
 //            System.out.println("deleting item is : " + item.toString());
@@ -72,7 +75,7 @@ public class SpecialtyController {
         }
     }
 
-    private static void unDeleteItem() {
+    private void unDeleteItem() {
         Specialty item = getGenericParamFromConsole("Specialty", repository, Status.DELETED);
         if (item != null) {
 //            System.out.println("UnDeleting item is : " + item.toString());

@@ -1,7 +1,9 @@
-package com.Dmitry_Elkin.PracticeTaskCRUD.repository;
+package com.Dmitry_Elkin.PracticeTaskCRUD.repository.gson;
 
-import com.Dmitry_Elkin.PracticeTaskCRUD.model.Specialty;
+import com.Dmitry_Elkin.PracticeTaskCRUD.model.Developer;
+import com.Dmitry_Elkin.PracticeTaskCRUD.model.Skill;
 import com.Dmitry_Elkin.PracticeTaskCRUD.model.Status;
+import com.Dmitry_Elkin.PracticeTaskCRUD.repository.DeveloperRepository;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -17,8 +19,13 @@ import java.util.Scanner;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
-public class GsonSpecialtyRepositoryImpl implements SpecialtyRepository {
-    final Class<Specialty> typeParameterClass = Specialty.class;
+public class GsonDeveloperRepositoryImpl implements DeveloperRepository {
+//    private static final String fileName = "developer.json";
+//    private static final String tmpFileName = "developer.tmp";
+//    private static final Path file = Paths.get(fileName);
+//    private static final Path tmpFile = Path.of(tmpFileName);
+
+    final Class<Developer> typeParameterClass = Developer.class;
     private final String fileName;
     private final String tmpFileName;
     private final Path file;
@@ -30,7 +37,7 @@ public class GsonSpecialtyRepositoryImpl implements SpecialtyRepository {
 //            .setPrettyPrinting() //formats json-file to well done form
             .create();
 
-    public GsonSpecialtyRepositoryImpl() {
+    public GsonDeveloperRepositoryImpl() {
         this.fileName = typeParameterClass.getSimpleName().toLowerCase() + ".json";
         this.tmpFileName = typeParameterClass.getSimpleName().toLowerCase() + ".tmp";
         this.file = Paths.get(fileName);
@@ -38,9 +45,10 @@ public class GsonSpecialtyRepositoryImpl implements SpecialtyRepository {
         this.lastIdfile = Path.of(typeParameterClass.getSimpleName().toLowerCase() + ".lastId");
     }
 
+
     @Override
-    public List<Specialty> getAll(Status status) {
-        List<Specialty> itemList = new LinkedList<>();
+    public List<Developer> getAll(Status status) {
+        List<Developer> itemList = new LinkedList<>();
         if (!Files.exists(file)){
             System.out.println("file "+fileName+" not exist!");
             return itemList;
@@ -48,7 +56,7 @@ public class GsonSpecialtyRepositoryImpl implements SpecialtyRepository {
         try {
             List<String> lines = Files.readAllLines(file);
             for (String jsonStr : lines) {
-                Specialty item = new Gson().fromJson(jsonStr, Specialty.class);
+                Developer item = new Gson().fromJson(jsonStr, Developer.class);
                 if (status == null) {
                     itemList.add(item);
                 } else if (item.getStatus() == status) {
@@ -56,19 +64,18 @@ public class GsonSpecialtyRepositoryImpl implements SpecialtyRepository {
                 }
             }
         } catch (IOException e) {
-            System.out.println("some io exception in module GsonSpecialtyRepositoryImpl in meth getAll: "+e.getMessage());
+            System.out.println("some io exception in module GsonDeveloperRepositoryImpl in meth getAll: "+e.getMessage());
         }
         return itemList;
     }
-
     //чтоб не переписывать код, где вызывается метод без параметров
     @Override
-    public List<Specialty> getAll() {
+    public List<Developer> getAll() {
         return getAll(null);
     }
 
     @Override
-    public Specialty getById(Long id) {
+    public Developer getById(Long id) {
         if (!Files.exists(file)) {
             System.out.println("file "+fileName+" not exist!");
             return null;
@@ -77,59 +84,65 @@ public class GsonSpecialtyRepositoryImpl implements SpecialtyRepository {
         try (Scanner sc = new Scanner(file)) {
             while (sc.hasNext()) {
                 jsonStr = sc.nextLine();
-                Specialty item = new Gson().fromJson(jsonStr, Specialty.class);
+                Developer item = new Gson().fromJson(jsonStr, Developer.class);
                 if (item.getId() == id) {
                     return item;
                 }
             }
         } catch (IOException e) {
-            System.out.println("some io exception in module GsonSpecialtyRepositoryImpl in meth getById: "+e.getMessage());
+//            throw new RuntimeException(e);
+            System.out.println("some io exception in module GsonDeveloperRepositoryImpl in meth getById: "+e.getMessage());
         }
 
         return null;
     }
 
     @Override
-    public void addOrUpdate(Specialty item) {
+    public void addOrUpdate(Developer item) {
         //*** add ***
         if (item.getId() <= 0) {
-            item.setNewId();
             add(item);
+        }else {
+           //*** update ***
+            update(item);
         }
-
-        //*** update ***
-        update(item);
     }
 
 
-    public void add(Specialty item){
+    public void add(Developer item){
         try {
+            long lastId = RepositoryService.generateNewId(lastIdfile);
+            item.setId(++lastId);
             if (Files.exists(file)) {
                 Files.write(file, List.of(gson.toJson(item)), StandardOpenOption.APPEND);
             } else {
                 Files.write(file, List.of(gson.toJson(item)), StandardOpenOption.CREATE);
             }
             //записываем lastId
-            long lastId = Specialty.getLastId();
             Files.writeString(lastIdfile, "" + lastId, Charset.defaultCharset(), StandardOpenOption.CREATE);
         } catch (IOException e) {
             //throw new RuntimeException(e);
-            System.out.println("some io exception in module GsonSpecialtyRepositoryImpl in meth add: "+e.getMessage());
+            System.out.println("some io exception in module GsonDeveloperRepositoryImpl in meth add: "+e.getMessage());
         }
     }
 
-    public void update(Specialty item){
+    public void update(Developer item){
+        if (!Files.exists(file)) {
+            System.out.println("file "+fileName+" not exist!");
+            return;
+        }
+
         try(
                 BufferedReader in = new BufferedReader(new FileReader(fileName));
                 BufferedWriter out = new BufferedWriter(new FileWriter(tmpFileName))
                 )
         {
             String jsonStr;
-            Specialty updatingItem;
+            Skill skill;
             while((jsonStr=in.readLine())!=null)  {
-                updatingItem = new Gson().fromJson(jsonStr, Specialty.class);
+                skill = new Gson().fromJson(jsonStr, Skill.class);
 
-                if (updatingItem.getId() == item.getId()) {
+                if (skill.getId() == item.getId()) {
                     jsonStr = gson.toJson(item);
                 }
 
@@ -137,29 +150,27 @@ public class GsonSpecialtyRepositoryImpl implements SpecialtyRepository {
                 out.newLine();
             }
         } catch (FileNotFoundException e) {
-            System.out.println("file "+file.getFileName()+" not exist!");
+            System.out.println("FileNotFoundException in module GsonDeveloperRepositoryImpl in meth update: "+e.getMessage());
         } catch (IOException e) {
-            System.out.println("oops! some IO exception : "+e.getMessage());
+            System.out.println("some io exception in module GsonDeveloperRepositoryImpl in meth add: "+e.getMessage());
         }
         try {
             Files.move(tmpFile, file, REPLACE_EXISTING);
         } catch (IOException e) {
-            System.out.println("some io exception in module GsonSpecialtyRepositoryImpl in meth update: "+e.getMessage());
+            System.out.println("oops! some IO exception : "+e.getMessage());
         }
 
     }
 
     @Override
-    public void delete(Specialty item) {
+    public void delete(Developer item) {
         item.setDeleted();
         update(item);
     }
 
-    @Override
-    public void unDelete(Specialty item) {
+    public void unDelete(Developer item) {
         item.setUnDeleted();
         update(item);
     }
-
 
 }
