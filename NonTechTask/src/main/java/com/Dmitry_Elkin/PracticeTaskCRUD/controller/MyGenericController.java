@@ -1,7 +1,10 @@
 package com.Dmitry_Elkin.PracticeTaskCRUD.controller;
 
-import com.Dmitry_Elkin.PracticeTaskCRUD.model.*;
+
+import com.Dmitry_Elkin.PracticeTaskCRUD.model.BaseModelsMethsI;
+import com.Dmitry_Elkin.PracticeTaskCRUD.model.Status;
 import com.Dmitry_Elkin.PracticeTaskCRUD.repository.GenericRepository;
+
 import java.lang.reflect.InvocationTargetException;
 
 import static com.Dmitry_Elkin.PracticeTaskCRUD.controller.MainController.sc;
@@ -57,7 +60,7 @@ public class MyGenericController<T extends BaseModelsMethsI> {
 
             item = (T) clazz.getConstructor(myClassParams).newInstance(name);
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException |
-                 InvocationTargetException | NoSuchMethodException e) {
+                 NoSuchMethodException | InvocationTargetException e) {
             System.out.println("error during creating new instance of class : " + e.getMessage());
             return;
         }

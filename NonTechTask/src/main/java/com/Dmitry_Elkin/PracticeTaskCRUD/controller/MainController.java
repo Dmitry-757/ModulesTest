@@ -1,7 +1,7 @@
 package com.Dmitry_Elkin.PracticeTaskCRUD.controller;
 
 
-import com.Dmitry_Elkin.PracticeTaskCRUD.AppMain;
+import main.java.com.Dmitry_Elkin.PracticeTaskCRUD.AppMain;
 
 import java.util.Scanner;
 
