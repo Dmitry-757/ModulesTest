@@ -1,6 +1,6 @@
-package main.java.com.Dmitry_Elkin.PracticeTaskCRUD;
+package com.Dmitry_Elkin.PracticeTaskCRUD;
 
-import main.java.com.Dmitry_Elkin.PracticeTaskCRUD.controller.MainController;
+import com.Dmitry_Elkin.PracticeTaskCRUD.controller.MainController;
 
 public class AppMain {
     public static  boolean terminate;
